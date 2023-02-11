@@ -2,7 +2,7 @@ package ratpack.example.kotlin
 
 import com.google.inject.AbstractModule
 import com.google.inject.multibindings.Multibinder
-import ratpack.handling.HandlerDecorator
+import ratpack.core.handling.HandlerDecorator
 
 /**
  * An example Guice module.

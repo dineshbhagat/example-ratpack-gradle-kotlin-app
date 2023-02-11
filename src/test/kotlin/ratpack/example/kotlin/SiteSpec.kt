@@ -1,10 +1,11 @@
 package ratpack.example.kotlin
 
 import com.google.common.io.CharStreams
-import org.jetbrains.spek.api.Spek
 import ratpack.test.MainClassApplicationUnderTest
 import java.io.InputStreamReader
-import kotlin.test.assertEquals
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.spekframework.spek2.Spek
+import org.spekframework.spek2.style.specification.describe
 
 class SiteSpec : Spek({
 
@@ -76,7 +77,8 @@ class SiteSpec : Spek({
      *
      * The solution is temporary until Spek supports some general kind of resource cleanup solution (See https://github.com/JetBrains/spek/issues/95)
      */
-    it("should close the aut") {
-        aut.close()
-    }
+    afterGroup { aut.close() }
+//    it("should close the aut") {
+//        aut.close()
+//    }
 })

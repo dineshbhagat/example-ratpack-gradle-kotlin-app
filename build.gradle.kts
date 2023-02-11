@@ -1,53 +1,54 @@
 import ratpack.gradle.*
-import com.github.jengelman.gradle.plugins.shadow.*
-import org.gradle.api.*
-import org.gradle.plugins.ide.idea.*
-import org.gradle.plugins.ide.idea.model.*
 
-buildscript {
-    repositories {
-        jcenter()
-        gradleScriptKotlin()
-    }
+val junitVersion by extra("5.9.0")
+val spekVersion by extra("2.0.19")
+val log4j by extra("2.19.0")
 
-    dependencies {
-        classpath("io.ratpack:ratpack-gradle:1.4.1")
-        classpath("com.github.jengelman.gradle.plugins:shadow:1.2.3")
-        classpath(kotlinModule("gradle-plugin"))
-    }
-}
-
-if (!JavaVersion.current().isJava8Compatible()) {
-    throw IllegalStateException("Must be built with Java 8 or higher")
-}
-
-apply {
-    plugin<RatpackPlugin>()
-    plugin<ShadowPlugin>()
-    plugin("kotlin")
-    plugin<IdeaPlugin>()
-    from("$rootDir/gradle/idea.gradle")
+plugins {
+    application
+    kotlin("jvm") version "1.8.0"
+    id("idea")
+    id("java-library")
+    id("java")
+    //generates fatJar https://imperceptiblethoughts.com/shadow/
+    id("com.github.johnrengelman.shadow") version "7.1.2"
+    id("io.ratpack.ratpack-java") version "2.0.0-rc-1"
 }
 
 repositories {
-    jcenter()
-    gradleScriptKotlin()
+    mavenCentral()
+    mavenLocal()
+    gradlePluginPortal()
+    maven { url = uri("https://repo.spring.io/milestone") }
+    maven { url = uri("https://repo.spring.io/snapshot") }
+    maven { url = uri("https://plugins.gradle.org/m2/") }
 }
 
 dependencies {
-    compile(kotlinModule("stdlib"))
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+    implementation("org.jetbrains.kotlin:kotlin-reflect")
     project.extensions.getByType(RatpackExtension::class.java).let { ratpack ->
-        compile(ratpack.dependency("guice"))
+        implementation(ratpack.dependency("guice"))
     }
-    runtime("org.apache.logging.log4j:log4j-slf4j-impl:2.6.1")
-    runtime("org.apache.logging.log4j:log4j-api:2.6.1")
-    runtime("org.apache.logging.log4j:log4j-core:2.6.1")
-    runtime("com.lmax:disruptor:3.3.4")
-    testCompile("junit:junit:4.+")
-    testCompile("org.jetbrains.spek:spek:1.0.+")
-    testCompile(kotlinModule("test"))
+    runtimeOnly("org.apache.logging.log4j:log4j-slf4j-impl:$log4j")
+    runtimeOnly("org.apache.logging.log4j:log4j-api:$log4j")
+    runtimeOnly("org.apache.logging.log4j:log4j-core:$log4j")
+    runtimeOnly("com.lmax:disruptor:3.3.4")
+
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${junitVersion}")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:${junitVersion}")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter:${junitVersion}")
+    testImplementation("org.spekframework.spek2:spek-dsl-jvm:$spekVersion")
+    testRuntimeOnly("org.spekframework.spek2:spek-runner-junit5:$spekVersion")
 }
 
-configure<ApplicationPluginConvention> {
-    mainClassName = "ratpack.example.kotlin.Main"
+application {
+    mainClass.set("ratpack.example.kotlin.Main")
+}
+
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
+    kotlinOptions {
+        freeCompilerArgs = listOf("-Xjsr305=strict")
+        jvmTarget = "11"
+    }
 }

@@ -1,9 +1,9 @@
 package ratpack.example.kotlin
 
-import ratpack.handling.Context
-import ratpack.handling.Handler
 import javax.inject.Inject
 import javax.inject.Singleton
+import ratpack.core.handling.Context
+import ratpack.core.handling.Handler
 
 /**
  * A handler implementation that is created via dependency injection.

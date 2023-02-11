@@ -1,3 +1,7 @@
+Original Source: https://github.com/ratpack/example-ratpack-gradle-kotlin-app, 
+But it has become obsolete and does not work with latest libraries,  
+So tried to upgrade libs to the latest version for better hands on.
+
 This is an example Ratpack app that:
 
 1. Is implemented in Kotlin
@@ -19,9 +23,10 @@ distribution for your app.
 
 Run:
 
-    ./gradlew installApp
-    cd build/install/example-ratpack-gradle-java-app
-    bin/example-ratpack-gradle-java-app
+    ./gradlew clean build
+    ./gradlew installDist
+    cd build/libs/
+    java -jar example-ratpack-gradle-kotlin-app-master-all.jar
 
 Your app should now be running (see http://gradle.org/docs/current/userguide/application_plugin.html) for more
 on what the Gradle application plugin can do for you.
